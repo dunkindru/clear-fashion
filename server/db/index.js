@@ -1,85 +1,38 @@
-require('dotenv').config();
+//NWjm68ZFZlHI0ZW7
+//ouioui
+
 const {MongoClient} = require('mongodb');
-const fs = require('fs');
-
+const MONGODB_URI='mongodb+srv://GusIsc:p8ONjNKX7Oxi2LGL@webapparchcluster.refsn.mongodb.net/WebAppArchCluster?retryWrites=true&w=majority';
 const MONGODB_DB_NAME = 'clearfashion';
-const MONGODB_COLLECTION = 'products';
-const MONGODB_URI = process.env.MONGODB_URI;
-
 let client = null;
-let database = null;
+var adresseP = require('E:/clear-fashion/server/sites/adresseParis.json');
+var dedicated = require('E:/clear-fashion/server/sites/dedicated.json');
+var montlimart = require('E:/clear-fashion/server/sites/montlimart.json');
+var products = adresseP.concat(dedicated, montlimart);
+let db;  
 
-/**
- * Get db connection
- * @type {MongoClient}
- */
-const getDB = module.exports.getDB = async () => {
-  try {
-    if (database) {
-      console.log('💽  Already Connected');
-      return database;
-    }
-
+async function Connect(){
     client = await MongoClient.connect(MONGODB_URI, {'useNewUrlParser': true});
-    database = client.db(MONGODB_DB_NAME);
+    console.log("Connection Successful");
+    db =  await client.db(MONGODB_DB_NAME);
+}
 
-    console.log('💽  Connected');
-
-    return database;
-  } catch (error) {
-    console.error('🚨 MongoClient.connect...', error);
-    return null;
-  }
-};
-
-/**
- * Insert list of products
- * @param  {Array}  products
- * @return {Object}
- */
-module.exports.insert = async products => {
-  try {
-    const db = await getDB();
-    const collection = db.collection(MONGODB_COLLECTION);
-    // More details
-    // https://docs.mongodb.com/manual/reference/method/db.collection.insertMany/#insert-several-document-specifying-an-id-field
-    const result = await collection.insertMany(products, {'ordered': false});
-
-    return result;
-  } catch (error) {
-    console.error('🚨 collection.insertMany...', error);
-    fs.writeFileSync('products.json', JSON.stringify(products));
-    return {
-      'insertedCount': error.result.nInserted
-    };
-  }
-};
-
-/**
- * Find products based on query
- * @param  {Array}  query
- * @return {Array}
- */
-module.exports.find = async query => {
-  try {
-    const db = await getDB();
-    const collection = db.collection(MONGODB_COLLECTION);
-    const result = await collection.find(query).toArray();
-
-    return result;
-  } catch (error) {
-    console.error('🚨 collection.find...', error);
-    return null;
-  }
-};
-
-/**
- * Close the connection
- */
-module.exports.close = async () => {
-  try {
+async function Close(){
     await client.close();
-  } catch (error) {
-    console.error('🚨 MongoClient.close...', error);
-  }
-};
+    console.log("Connection Closed");
+}
+
+async function InsertProduct(){ 
+    await db.createCollection("products");
+    const collection = await db.collection('products');
+    //console.log(typeof(products));
+    const result = await collection.insertMany(products);
+    //console.log(result);
+}
+
+async function main(){
+    await Connect();
+    await InsertProduct();
+    await Close();
+}
+

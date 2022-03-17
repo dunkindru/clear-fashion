@@ -1,0 +1,1 @@
+MONGODB_URI='mongodb+srv://<danidani>:<testdanidani>@<cluster-url>?retryWrites=true&writeConcern=majority';

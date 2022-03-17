@@ -27,14 +27,23 @@ console.log(MY_FAVORITE_BRANDS[0]);
  */
 
 // 🎯 TODO: The cheapest t-shirt
-// 0. I have 3 favorite brands stored in MY_FAVORITE_BRANDS variable 
-console.log(MY_FAVORITE_BRANDS);
+// 0. I have 3 favorite brands stored in MY_FAVORITE_BRANDS variable
 // 1. Create a new variable and assign it the link of the cheapest t-shirt
 // I can find on these e-shops
-
 // 2. Log the variable
 
+const cheap_tee = [{ 
+    'name' : 'Hoopal',
+    'url' : 'https://hopaal.com/collections/t-shirts-homme/products/classique-forest-t-shirt-homme?variant=19733822111830'
+}, {
+    'name' : 'Loom',
+    'url' : 'https://www.loom.fr/products/le-t-shirt'
+}, { 
+    'name' : 'ADRESSE',
+    'url' : 'https://adresse.paris/t-shirts-et-polos/4238-t-shirt-ranelagh-1300000262026.html'        
+}];
 
+console.table(cheap_tee);
 
 /**
  * 👕
@@ -46,74 +55,50 @@ console.log(MY_FAVORITE_BRANDS);
  */
 
 // 🎯 TODO: Number of products
-// 1. Create a variable and assign it the number of products 
-let nb_product=marketplace.length
-// 2. Log the variable 
-console.log(nb_product)
-
+// 1. Create a variable and assign it the number of products
+// 2. Log the variable
+const number_product = marketplace.length
+console.log(number_product);
 
 // 🎯 TODO: Brands name
 // 1. Create a variable and assign it the list of brands name only
-var brands=[]
-for (let i = 0; i < marketplace.length; i++) {
-  brands.push(marketplace[i].brand)
-}
 // 2. Log the variable
-function toUniqueArray(a){
-    var newArr = [];
-    for (var i = 0; i < a.length; i++) {
-        if (newArr.indexOf(a[i]) === -1) {
-            newArr.push(a[i]);
-        }
-    }
-  return newArr;
-}
-brands=toUniqueArray(brands)
-console.log(brands)
 // 3. Log how many brands we have
-console.log(brands.length);
+var list_brand = marketplace.map(a => a.brand); 
+var number_brand = new Set(list_brand);
+console.log(number_brand);
+console.log(number_brand.size)    
 
 // 🎯 TODO: Sort by price
 // 1. Create a function to sort the marketplace products by price
-marketplace.sort(function(a, b){
-    return a.price - b.price;
-});
 // 2. Create a variable and assign it the list of products by price from lowest to highest
-var marketplaceSortedPrice=marketplace.sort(function(a, b){
-    return a.price - b.price;
-});
 // 3. Log the variable
-console.log(marketplaceSortedPrice)
-
+var sort_marketplace_price = marketplace.sort((a,b)=> a.price - b.price)
+console.log(sort_marketplace_price)
 
 // 🎯 TODO: Sort by date
 // 1. Create a function to sort the marketplace objects by products date
-function custom_sort(a, b) {
-    return new Date(a.date).getTime() - new Date(b.date).getTime();
-}
 // 2. Create a variable and assign it the list of products by date from recent to old
-var marketplaceSortedDate=marketplace.sort(custom_sort);
 // 3. Log the variable
-console.log(marketplaceSortedDate);
+var sort_marketplace_date = marketplace.sort(function(a,b){
+  if (a.date<b.date) {
+    return -1;
+  } else {
+    return 1;
+}});
+console.log(sort_marketplace_date);
 
 // 🎯 TODO: Filter a specific price range
 // 1. Filter the list of products between 50€ and 100€
-
 // 2. Log the list
-
+var filter_marketplace_50100 = marketplace.filter(a => a.price>=50 && a.price<100);
+console.log(filter_marketplace_50100);
 
 // 🎯 TODO: Average price
 // 1. Determine the average price of the marketplace
-var prices=[]
-for (let i = 0; i < marketplace.length; i++) {
-  prices.push(marketplace[i].price)
-}
 // 2. Log the average
-const sum = prices.reduce((a, b) => a + b, 0);
-const avg = (sum / prices.length) || 0;
-console.log(avg)
-
-
+const average = marketplace.reduce((total, next) => total + next.price, 0)/ marketplace.length;
+console.log(average);
 
 
 /**
@@ -123,9 +108,9 @@ console.log(avg)
  * 🏎
  */
 
-// 🎯 TODO: Products by brands
-// 1. Create an object called `brands` to manipulate products by brand name
+// 🎯 TODO: Products by brandsanipulate products by brand name
 // The key is the brand name
+// 1. Create an object called `brands` to m
 // The value is the array of products
 //
 // Example:
@@ -136,18 +121,39 @@ console.log(avg)
 //   'brand-name-n': [{...}, {...}, ..., {...}],
 // };
 //
-// 2. Log the variable
-// 3. Log the number of products by brands
+var groupbyBrand = marketplace.reduce(function(groups, item) {
+  const val = item["brand"]
+  groups[val] = groups[val] || []
+  groups[val].push(item)
+  return groups
+}, {});
 
+// 2. Log the variable
+console.log(groupbyBrand);
+// 3. Log the number of products by brands
+const val = Object.values(groupbyBrand);
+var nb_per_brand = new Object();
+val.forEach(a => nb_per_brand[a[0].brand] = a.length);
+console.log(nb_per_brand);
 
 // 🎯 TODO: Sort by price for each brand
 // 1. For each brand, sort the products by price, from highest to lowest
+var sortbrand = new Object(); 
+val.forEach(a => sortbrand[a[0].brand] = (a.sort((b,c) => b.price - c.price)))
 // 2. Log the sort
-
+console.log(sortbrand);
 
 // 🎯 TODO: Sort by date for each brand
 // 1. For each brand, sort the products by date, from old to recent
+var sortbrand_date = new Object(); 
+val.forEach(a => sortbrand_date[a[0].brand] = (a.sort(function(a,b){
+  if (a.date<b.date) {
+    return -1;
+  } else {
+    return 1;
+}})));
 // 2. Log the sort
+console.log(sortbrand_date);
 
 
 
@@ -163,7 +169,13 @@ console.log(avg)
 // 🎯 TODO: Compute the p90 price value
 // 1. Compute the p90 price value of each brand
 // The p90 value (90th percentile) is the lower value expected to be exceeded in 90% of the products
+var p90 = new Object();
 
+for (const [key, value] of Object.entries(sortbrand)){
+  let pos = Math.round(value.length * 0.1);
+  p90[key] = value[pos].price;
+};
+console.log(p90);
 
 
 
@@ -239,21 +251,43 @@ const COTELE_PARIS = [
 // 🎯 TODO: New released products
 // // 1. Log if we have new products only (true or false)
 // // A new product is a product `released` less than 2 weeks.
-for i in 
+const date = new Date('2021-01-16');
+function isNew(product){
+  const release = new Date(product.released);
+  var diff = Math.abs((date - release)/(7*24*60*60*1000));
+  //console.log(diff);
+  if (diff < 2) {
+    console.log("True");
+  }
+  else
+  {
+    console.log("False");
+  };
+}
+isNew(COTELE_PARIS[0]);
+
 
 // 🎯 TODO: Reasonable price
 // // 1. Log if coteleparis is a reasonable price shop (true or false)
 // // A reasonable price if all the products are less than 100€
-
+var reasonable_price = "True";
+COTELE_PARIS.forEach(function(a) { if (a.price>100) {reasonable_price = "False"; };})
+console.log(reasonable_price);
 
 // 🎯 TODO: Find a specific product
 // 1. Find the product with the uuid `b56c6d88-749a-5b4c-b571-e5b5c6483131`
 // 2. Log the product
+var product = new Object();
 
+COTELE_PARIS.forEach(function(a) { if (a.uuid == `b56c6d88-749a-5b4c-b571-e5b5c6483131`) {product = a;}});
+console.log(product.name);
 
 // 🎯 TODO: Delete a specific product
 // 1. Delete the product with the uuid `b56c6d88-749a-5b4c-b571-e5b5c6483131`
+const COTELE_PARIS_V2 = COTELE_PARIS.filter(a => a.uuid != `b56c6d88-749a-5b4c-b571-e5b5c6483131`);
 // 2. Log the new list of product
+console.log(COTELE_PARIS_V2);
+
 
 // 🎯 TODO: Save the favorite product
 let blueJacket = {
@@ -269,7 +303,12 @@ let jacket = blueJacket;
 jacket.favorite = true;
 
 // 1. Log `blueJacket` and `jacket` variables
+console.log(blueJacket);
+console.log(jacket);
+
 // 2. What do you notice?
+
+//Same thing
 
 blueJacket = {
   'link': 'https://coteleparis.com/collections/tous-les-produits-cotele/products/la-veste-bleu-roi',
@@ -279,7 +318,11 @@ blueJacket = {
 
 // 3. Update `jacket` property with `favorite` to true WITHOUT changing blueJacket properties
 
+jacket = {...blueJacket};
+jacket.favorite = true;
 
+console.log(blueJacket);
+console.log(jacket);
 
 
 
@@ -291,4 +334,6 @@ blueJacket = {
 
 // 🎯 TODO: Save in localStorage
 // 1. Save MY_FAVORITE_BRANDS in the localStorage
+localStorage.setItem('fav_brand', JSON.stringify(MY_FAVORITE_BRANDS));
 // 2. log the localStorage
+console.log(localStorage);
